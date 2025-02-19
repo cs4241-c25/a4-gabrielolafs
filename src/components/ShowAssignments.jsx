@@ -1,8 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 
-const ShowAssignments = () => {
-    const [tasks, setTasks] = useState([]);
+const ShowAssignments = ({ tasks, fetchTasks }) => {
+    const handleDelete = async (task) => {
+        try {
+            const response = await axios.post("/delete-task", { task: task });
+            console.log('Response from server:', response.data);
+            fetchTasks(); // Update tasks
+        } catch (error) {
+            console.error('Error sending data to server:', error);
+        }
+    }
+
+    const handleCompleteChange = async (task, complete) => {
+        complete = complete === "on" ? "off" : "on";
+
+        try {
+            const response = await axios.post("/update-task", { task: task, complete: complete });
+            console.log('Response from server:', response.data);
+            fetchTasks(); // Update tasks
+        } catch (error) {
+            console.error('Error sending data to server:', error);
+        }
+    }
 
     function daysTillDue(dueDate) {
         const today = new Date();
@@ -10,46 +30,6 @@ const ShowAssignments = () => {
         const diffTime = due - today;
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
-
-    const handleDelete = async (task) => {
-        console.log(`taskId ${task}`)
-        try {
-            const response = await axios.post("/delete-task", { task: task });
-            console.log('Response from server:', response.data);
-            window.location.reload(); // cheating
-        } catch (error) {
-            console.error('Error sending data to server:', error);
-        }
-    }
-
-    const handleCompleteChange = async (task, complete) => {
-        console.log(`complete ${complete}`)
-        console.log(`taskId ${task}`)
-        console.log(tasks)
-        complete = complete === "on" ? "off" : "on";
-
-        try {
-            const response = await axios.post("/update-task", { task: task, complete: complete });
-            console.log('Response from server:', response.data);
-            window.location.reload(); // cheating
-        } catch (error) {
-            console.error('Error sending data to server:', error);
-        }
-    }
-
-    useEffect(() => {
-        async function fetchTasks() {
-            try {
-                const response = await axios.get('/tasks');
-                console.log('Fetching tasks');
-                setTasks(response.data);
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        }
-
-        fetchTasks();
-    }, []);
 
     return (
         <div className="container mt-5">

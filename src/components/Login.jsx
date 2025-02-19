@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log(username)
             const response = await axios.post('/sign-in', null, {
                 params: { username, password }
             });
             console.log(response.data);
-            window.location.reload(); // cheating
+            onLoginSuccess(); // no longer cheating :)
         } catch (error) {
             alert('Username or password is incorrect');
             console.error('Error during login:', error);

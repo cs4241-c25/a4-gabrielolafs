@@ -83,9 +83,6 @@ app.get('/', (req, res) => {
 
 // Routes
 app.post('/sign-in', (req, res, next) => {
-    console.log(`Received sign-in request for username: ${req.body.username}`);
-    const { username, password } = req.query;
-    console.log(req.query);
     passport.authenticate('local', (err, user, info) => {
         if (err) {
             console.error('Error during authentication:', err);
@@ -135,7 +132,6 @@ app.get('/tasks', async (req, res) => {
         const tasks = await Task.find({ user: req.user._id });
         res.json(tasks);
     } catch (error) {
-        console.log('ahhhhhh', error);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -169,7 +165,6 @@ app.get('/auth-check', (req, res) => {
 });
 
 app.get('/user-info', (req, res) => {
-    console.log(req.user)
     if (req.isAuthenticated()) {
         res.status(200).send({ username: req.user.username });
     } else {
@@ -177,7 +172,11 @@ app.get('/user-info', (req, res) => {
     }
 });
 
-app.post('/sign-out', (req, res) => {
-    req.logout();
-    res.sendStatus(200);
+app.post('/sign-out', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.sendStatus(200);
+    });
 });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 
-const AddAssignment = () => {
+const AddAssignment = ({ fetchTasks }) => {
     const [task, setTask] = useState('');
     const [priority, setPriority] = useState('Low');
     const [dueDate, setDueDate] = useState('');
@@ -15,16 +15,7 @@ const AddAssignment = () => {
                 setTask('');
                 setPriority('Low');
                 setDueDate('');
-                window.location.reload(); // kinda cheating, sorry
-            } else {
-                console.error('Failed to add task');
-            }
-            if (response.ok) {
-                console.log('Task added successfully');
-                // Optionally, reset the form fields
-                setTask('');
-                setPriority('Low');
-                setDueDate('');
+                fetchTasks(); // Update tasks
             } else {
                 console.error('Failed to add task');
             }

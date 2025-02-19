@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import SigninOptions from './components/SigninOptions';
 import AddAssignment from "./components/AddAssignment";
 import ShowAssignments from "./components/ShowAssignments";
@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -18,16 +19,39 @@ const App = () => {
         checkAuth();
     }, []);
 
+    const fetchTasks = async () => {
+        try {
+            const response = await axios.get('/tasks');
+            setTasks(response.data);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchTasks();
+        }
+    }, [isAuthenticated]);
+
+    const handleLoginSuccess = () => {
+        setIsAuthenticated(true);
+    };
+
+    const handleSignOutSuccess = () => {
+        setIsAuthenticated(false);
+    };
+
     return (
-        <div className="App">
+        <div className="App container px-3">
             {isAuthenticated ? (
                 <>
-                    <SignedIn></SignedIn>
-                    <AddAssignment />
-                    <ShowAssignments />
+                    <SignedIn onSignOutSuccess={handleSignOutSuccess} />
+                    <AddAssignment fetchTasks={fetchTasks} />
+                    <ShowAssignments tasks={tasks} fetchTasks={fetchTasks} />
                 </>
             ) : (
-                <SigninOptions />
+                <SigninOptions onLoginSuccess={handleLoginSuccess} />
             )}
         </div>
     );

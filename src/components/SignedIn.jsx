@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 
-const SignedIn = () => {
+const SignedIn = ({ onSignOutSuccess }) => {
     const [username, setUsername] = useState('');
 
     useEffect(() => {
         async function fetchUsername() {
             try {
                 const response = await axios.get('/user-info');
-                console.log('User info:', response.data); // Debugging line
                 setUsername(response.data.username);
             } catch (error) {
                 console.error('Error fetching user info:', error);
@@ -21,7 +20,7 @@ const SignedIn = () => {
     const handleSignOut = async () => {
         try {
             await axios.post('/sign-out');
-            window.location.reload();
+            onSignOutSuccess(); // :P
         } catch (error) {
             console.error('Error signing out:', error);
         }
