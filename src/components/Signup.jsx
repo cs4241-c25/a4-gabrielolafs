@@ -28,7 +28,7 @@ const Signup = ({ onAccountCreated }) => {
                 return;
             }
             const response = await axios.post('/sign-up', { username, password });
-            console.log(response.data)
+            console.log(response.data);
             onAccountCreated();
         } catch (error) {
             console.error('Error during signup:', error);
