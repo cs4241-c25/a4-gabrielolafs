@@ -11,6 +11,17 @@ const ShowAssignments = () => {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
 
+    const handleDelete = async (task) => {
+        console.log(`taskId ${task}`)
+        try {
+            const response = await axios.post("/delete-task", { task: task });
+            console.log('Response from server:', response.data);
+            window.location.reload(); // cheating
+        } catch (error) {
+            console.error('Error sending data to server:', error);
+        }
+    }
+
     const handleCompleteChange = async (task, complete) => {
         console.log(`complete ${complete}`)
         console.log(`taskId ${task}`)
@@ -51,6 +62,7 @@ const ShowAssignments = () => {
                     <th>Task</th>
                     <th>Priority</th>
                     <th>Due Date</th>
+                    <th>Press to Delete</th>
                 </tr>
                 </thead>
                 <tbody id="completedTasksBody">
@@ -59,7 +71,7 @@ const ShowAssignments = () => {
                         <td>
                             <input
                                 type="checkbox"
-                                name={`complete-${task._id}`}
+                                name={`complete-${task.task}`}
                                 checked={1? task.complete === "on" : 0}
                                 onChange={() => handleCompleteChange(task.task, task.complete)}
                             />
@@ -68,6 +80,9 @@ const ShowAssignments = () => {
                         <td>{task.task}</td>
                         <td>{task.priority}</td>
                         <td>{task.dueDate.split('T')[0]}</td>
+                        <td>
+                            <button onClick={() => handleDelete(task.task)}>Delete</button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
