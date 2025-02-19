@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../axiosConfig';
+import axios from 'axios';
 
 const Signup = ({ onAccountCreated }) => {
     const [username, setUsername] = useState('');
@@ -22,12 +22,13 @@ const Signup = ({ onAccountCreated }) => {
         }
         try {
             console.log('Checking if username already exists');
-            const userCheckResponse = await axiosInstance.get('/user-check', { params: { username } });
+            const userCheckResponse = await axios.get('/user-check', { params: { username } });
             if (userCheckResponse.data === 1) {
                 alert('Username already exists');
                 return;
             }
-            const response = await axiosInstance.post('/sign-up', { username, password });
+            const response = await axios.post('/sign-up', { username, password });
+            console.log(response.data)
             onAccountCreated();
         } catch (error) {
             console.error('Error during signup:', error);

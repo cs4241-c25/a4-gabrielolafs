@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../axiosConfig';
+import axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -8,9 +8,13 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('/sign-in', JSON.stringify({ username, password }));
+            console.log(username)
+            const response = await axios.post('/sign-in', null, {
+                params: { username, password }
+            });
             console.log(response.data);
         } catch (error) {
+            alert('Username or password is incorrect');
             console.error('Error during login:', error);
         }
     };

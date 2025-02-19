@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from "../axiosConfig";
+import axios from "axios";
 
 const AddAssignment = () => {
     const [task, setTask] = useState('');
@@ -9,12 +9,13 @@ const AddAssignment = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post('/submit', { task, priority, dueDate });
+            const response = await axios.post('/submit', { task, priority, dueDate });
             if (response.status === 201) {
                 console.log('Task added successfully');
                 setTask('');
                 setPriority('Low');
                 setDueDate('');
+                window.location.reload(); // kinda cheating, sorry
             } else {
                 console.error('Failed to add task');
             }

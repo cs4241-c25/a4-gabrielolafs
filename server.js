@@ -10,9 +10,9 @@ const app = express();
 const port = 3000;
 
 app.listen(process.env.PORT || port);
+
 // Connect to MongoDB
 const mongoURI = "mongodb+srv://ggolafsson:ap5qqlcvidW5s0uV@cluster0.g3ygk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Define User schema and model
@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
     username: String,
     password: String
 });
-
 const User = mongoose.model('User', userSchema);
 
 // Define Task schema and model
@@ -31,7 +30,6 @@ const taskSchema = new mongoose.Schema({
     complete: { type: String, default: 'off' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
-
 const Task = mongoose.model('Task', taskSchema);
 
 app.use(cors());
@@ -75,19 +73,18 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use('/', (req, res, next) => {
-//     res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline';");
-//     next();
-// })
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'dist')));
 
 app.get('/', (req, res) => {
-    console.log(`sending index.html ${__dirname}/public/index.html`);
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Routes
 app.post('/sign-in', (req, res, next) => {
     console.log(`Received sign-in request for username: ${req.body.username}`);
+    const { username, password } = req.query;
+    console.log(req.query);
     passport.authenticate('local', (err, user, info) => {
         if (err) {
             console.error('Error during authentication:', err);
@@ -108,13 +105,13 @@ app.post('/sign-in', (req, res, next) => {
     })(req, res, next);
 });
 
-app.get('/user-check', async (req, res) => {
-    const user = await User.findOne({ username: req.query.username });
-    if (user) {
-        return res.json(1);
-    }
-    res.json(0);
-});
+// app.get('/user-check', async (req, res) => {
+//     const user = await User.findOne({ username: req.query.username });
+//     if (user) {
+//         return res.json(1);
+//     }
+//     res.json(0);
+// });
 
 app.post('/sign-up', async (req, res) => {
     const { username, password } = req.body;
@@ -132,10 +129,6 @@ app.get('/tasks', async (req, res) => {
         console.log('ahhhhhh', error);
         res.status(500).send('Internal Server Error');
     }
-    // const user = await User.findOne({ username: "aoeu" });
-    // const tasks = await Task.find({ user: user });
-    // const tasks = await Task.find({ user: req.user._id });
-    // res.json(tasks);
 });
 
 app.post('/submit', ensureAuthenticated, async (req, res) => {
@@ -146,7 +139,8 @@ app.post('/submit', ensureAuthenticated, async (req, res) => {
 
 app.post('/update-task', ensureAuthenticated, async (req, res) => {
     const { task, complete } = req.body;
-    await Task.updateOne({ task, user: req.user._id }, { complete });
+    console.log(`task: ${task}, complete: ${complete}`);
+    await Task.updateOne({ task: task, user: req.user._id }, { complete });
     res.send('Task updated');
 });
 
@@ -155,14 +149,6 @@ app.post('/delete-task', ensureAuthenticated, async (req, res) => {
     await Task.deleteOne({ task, user: req.user._id });
     res.send('Task deleted');
 });
-
-// app.get('/login', (req, res) => {
-//     res.sendFile(__dirname + '/public/login.html');
-// });
-
-// app.get('/signup', (req, res) => {
-//     res.sendFile(__dirname + '/public/signup.html');
-// });
 
 app.get('/auth-check', (req, res) => {
     console.log("this is the username: ${req.user.username)");

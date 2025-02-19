@@ -1,13 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from "../axiosConfig";
+import axios from 'axios';
 
 const ShowAssignments = () => {
     const [tasks, setTasks] = useState([]);
 
+    function daysTillDue(dueDate) {
+        const today = new Date();
+        const due = new Date(dueDate);
+        const diffTime = due - today;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    const handleCompleteChange = async (task, complete) => {
+        console.log(`complete ${complete}`)
+        console.log(`taskId ${task}`)
+        console.log(tasks)
+        complete = complete === "on" ? "off" : "on";
+
+        try {
+            const response = await axios.post("/update-task", { task: task, complete: complete });
+            console.log('Response from server:', response.data);
+            window.location.reload(); // cheating
+        } catch (error) {
+            console.error('Error sending data to server:', error);
+        }
+    }
+
     useEffect(() => {
         async function fetchTasks() {
             try {
-                const response = await axiosInstance.get('/tasks');
+                const response = await axios.get('/tasks');
                 console.log('Fetching tasks');
                 setTasks(response.data);
             } catch (error) {
@@ -16,7 +38,7 @@ const ShowAssignments = () => {
         }
 
         fetchTasks();
-    }, []); // Empty dependency array ensures this runs on load
+    }, []);
 
     return (
         <>
@@ -34,11 +56,18 @@ const ShowAssignments = () => {
                 <tbody id="completedTasksBody">
                 {tasks.map(task => (
                     <tr key={task._id}>
-                        <td>{task.complete ? 'Yes' : 'No'}</td>
-                        <td>{task.daysTillDue}</td>
+                        <td>
+                            <input
+                                type="checkbox"
+                                name={`complete-${task._id}`}
+                                checked={1? task.complete === "on" : 0}
+                                onChange={() => handleCompleteChange(task.task, task.complete)}
+                            />
+                        </td>
+                        <td>{daysTillDue(task.dueDate)}</td>
                         <td>{task.task}</td>
                         <td>{task.priority}</td>
-                        <td>{task.dueDate}</td>
+                        <td>{task.dueDate.split('T')[0]}</td>
                     </tr>
                 ))}
                 </tbody>
