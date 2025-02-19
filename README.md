@@ -28,5 +28,6 @@ Sample Readme (delete the above when you're ready to submit, and modify the belo
 your hosting link e.g. http://a4-wilsonwong.glitch.me
 
 Include a very brief summary of your project here and what you changed / added to assignment #3. 
-
-Unlike previous assignments, this assignment will be solely graded on whether or not you successfully complete it. Partial credit will be generously given.
+- added React components
+- signing with GitHub
+- no creation of accounts with duplicate usernames
