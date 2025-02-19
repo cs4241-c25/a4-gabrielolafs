@@ -6,6 +6,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
+
 const app = express();
 const port = 3000;
 
@@ -105,13 +106,21 @@ app.post('/sign-in', (req, res, next) => {
     })(req, res, next);
 });
 
-// app.get('/user-check', async (req, res) => {
-//     const user = await User.findOne({ username: req.query.username });
-//     if (user) {
-//         return res.json(1);
-//     }
-//     res.json(0);
-// });
+app.get('/user-check', async (req, res) => {
+    const user = await User.findOne({ username: req.query.username });
+    if (user) {
+        return res.json(1);
+    }
+    res.json(0);
+});
+
+app.get('/signed-in-check', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json(1);
+    } else {
+        res.json(0);
+    }
+})
 
 app.post('/sign-up', async (req, res) => {
     const { username, password } = req.body;
@@ -146,8 +155,6 @@ app.post('/update-task', ensureAuthenticated, async (req, res) => {
 
 app.post('/delete-task', ensureAuthenticated, async (req, res) => {
     const { task } = req.body;
-    console.log(`task: ${task}`);
-    console.log()
     await Task.deleteOne({ task, user: req.user._id });
     res.send('Task deleted');
 });
@@ -162,6 +169,7 @@ app.get('/auth-check', (req, res) => {
 });
 
 app.get('/user-info', (req, res) => {
+    console.log(req.user)
     if (req.isAuthenticated()) {
         res.status(200).send({ username: req.user.username });
     } else {

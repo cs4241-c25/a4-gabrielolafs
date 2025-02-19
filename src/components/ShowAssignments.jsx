@@ -52,8 +52,8 @@ const ShowAssignments = () => {
     }, []);
 
     return (
-        <>
-            <h2 className="mt-5">Total List of Assignments:</h2>
+        <div className="container mt-5">
+            <h2>Total List of Assignments:</h2>
             <table className="table table-striped mt-3">
                 <thead>
                 <tr>
@@ -72,7 +72,7 @@ const ShowAssignments = () => {
                             <input
                                 type="checkbox"
                                 name={`complete-${task.task}`}
-                                checked={1? task.complete === "on" : 0}
+                                checked={task.complete === "on"}
                                 onChange={() => handleCompleteChange(task.task, task.complete)}
                             />
                         </td>
@@ -81,13 +81,13 @@ const ShowAssignments = () => {
                         <td>{task.priority}</td>
                         <td>{task.dueDate.split('T')[0]}</td>
                         <td>
-                            <button onClick={() => handleDelete(task.task)}>Delete</button>
+                            <button className="btn btn-danger" onClick={() => handleDelete(task.task)}>Delete</button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-        </>
+        </div>
     );
 };
 

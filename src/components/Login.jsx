@@ -13,6 +13,7 @@ const Login = () => {
                 params: { username, password }
             });
             console.log(response.data);
+            window.location.reload(); // cheating
         } catch (error) {
             alert('Username or password is incorrect');
             console.error('Error during login:', error);

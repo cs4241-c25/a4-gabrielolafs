@@ -18,9 +18,21 @@ const SignedIn = () => {
         fetchUsername();
     }, []);
 
+    const handleSignOut = async () => {
+        try {
+            await axios.post('/sign-out');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    };
+
     return (
-        <div className="App">
+        <div className="container text-center mt-5">
             <h1>Signed in as {username}.</h1>
+            <a href="#" onClick={handleSignOut} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+                Sign Out
+            </a>
         </div>
     );
 };

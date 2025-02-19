@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Login from './Login';
 import Signup from './Signup';
+import Login from './Login';
 
 const SigninOptions = () => {
     const [newUserFlag, setNewUserFlag] = useState(false);
@@ -14,14 +14,14 @@ const SigninOptions = () => {
     };
 
     return (
-        <div className="App">
+        <div className="container text-center mt-5">
             <h1>Task Manager</h1>
-                <>
-                    {newUserFlag ? <Signup onAccountCreated={handleAccountCreated} /> : <Login />}
-                    <button onClick={toggleUserFlag}>
-                        {newUserFlag ? 'Switch to Login' : 'Switch to Signup'}
-                    </button>
-                </>
+            <div className="mt-3">
+                {newUserFlag ? <Signup onAccountCreated={handleAccountCreated} /> : <Login />}
+                <button className="btn btn-primary mt-3" onClick={toggleUserFlag}>
+                    {newUserFlag ? 'Switch to Login' : 'Switch to Signup'}
+                </button>
+            </div>
         </div>
     );
 };
